@@ -42,4 +42,23 @@ public class UserController {
         return userService.updateUserById(id,user);
     }
 
+    @DeleteMapping("/users/{id}")
+    public String deleteUserById(@PathVariable Long id){
+        return userService.deleteUserById(id);
+    }
+
+
+    @GetMapping("/users/username/{userName}")
+    public Optional<User> findUserByUserName(@PathVariable String userName){
+        return userService.getUserByUserName(userName);
+    }
+
+    /*@GetMapping("/users")
+    public User getUserByUsername(@RequestParam String username) */
+
+    @GetMapping("/users/username")
+    public Optional<User> findByUserNames(@RequestParam String userName){
+        return userService.getUserByUserName(userName);
+    }
+
 }

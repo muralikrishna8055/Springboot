@@ -17,6 +17,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     // to find all records
     public List<UserResponse> getAllUsers(){
        //return userRepository.findAll();
@@ -40,21 +42,46 @@ public class UserService {
     }
 
 
+
+    // create user
     public User createUser(User request){
         return userRepository.save(request);
     }
 
 
 
+    //get user by id
     public Optional<User> getUserById(Long id){
-
         //return userRepository.findById(id);
         Optional<User> user=userRepository.findById(id);
         return user;
     }
 
+
+    //update user
     public User updateUserById(Long id,User user){
         user.setId(id);
         return userRepository.save(user);
     }
+
+
+
+    // find user by id
+    public String deleteUserById(Long id){
+        if(userRepository.findById(id).isPresent()){
+            userRepository.deleteById(id);
+            return "user deleted";
+        }
+        else{
+            return "user dont exsist";
+        }
+    }
+
+
+    //find user by user name
+    public Optional<User> getUserByUserName(String userName){
+        return userRepository.findByUsername(userName);
+    }
+
+
 }
