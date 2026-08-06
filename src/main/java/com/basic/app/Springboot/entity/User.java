@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 @Data
 public class User {
     //, schema = "userManagement" is used as a parameter in @Table to distinguish when we have multiple table with same name
@@ -17,16 +17,16 @@ public class User {
     @Column(name="USER_NAME",nullable = false,unique = true)
     private String username;
 
-    @Column(name="FIRST_NAME",nullable = false,unique = true)
+    @Column(name="FIRST_NAME",nullable = false)
     private String firstname;
 
-    @Column(name = "LAST_NAME",nullable = false,unique = true)
+    @Column(name = "LAST_NAME",nullable = false)
     private String lastname;
 
     @Column(name = "EMAIL",nullable = false,unique = true)
     private  String email;
 
-    @Column(name = "ROLE",nullable = false,unique = true)
+    @Column(name = "ROLE",nullable = false)
     private  String role;
 
     @Column(name = "SSN", nullable = false,unique = true)
