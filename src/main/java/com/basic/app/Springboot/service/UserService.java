@@ -3,10 +3,13 @@ package com.basic.app.Springboot.service;
 
 import com.basic.app.Springboot.dto.UserResponse;
 import com.basic.app.Springboot.entity.User;
+import com.basic.app.Springboot.exception.UserExistsException;
 import com.basic.app.Springboot.exception.UserNotFoundException;
 import com.basic.app.Springboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +48,16 @@ public class UserService {
 
 
     // create user
-    public User createUser(User request){
+    public User createUser(User request) throws UserExistsException {
+
+        Optional<User> user = userRepository.findByUsername(request.getUsername());
+
+        if (user.isPresent()) {
+            throw new UserExistsException("Username already exists");
+        }
         return userRepository.save(request);
+
     }
-
-
 
     //get user by id
     public Optional<User> getUserById(Long id) throws UserNotFoundException {
@@ -79,13 +87,13 @@ public class UserService {
 
 
     // find user by id
-    public String deleteUserById(Long id){
+    public String deleteUserById(Long id) {
         if(userRepository.findById(id).isPresent()){
             userRepository.deleteById(id);
             return "user deleted";
         }
         else{
-            return "user dont exsist";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"user don't exists");
         }
     }
 

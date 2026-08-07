@@ -3,12 +3,16 @@ package com.basic.app.Springboot.controller;
 import com.basic.app.Springboot.dto.UserDto;
 import com.basic.app.Springboot.dto.UserResponse;
 import com.basic.app.Springboot.entity.User;
+import com.basic.app.Springboot.exception.UserExistsException;
 import com.basic.app.Springboot.exception.UserNotFoundException;
 import com.basic.app.Springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +35,18 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user){
-        return userService.createUser(user);
+    public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder builder){
+
+        try{
+             userService.createUser(user);
+            HttpHeaders headers=new HttpHeaders();
+            headers.setLocation(builder.path("/users/{id}").buildAndExpand(user.getId()).toUri());
+            return new ResponseEntity<Void>(headers,HttpStatus.CREATED);
+
+        }catch (UserExistsException ex){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ex.getMessage());
+        }
+
     }
 
 
@@ -42,12 +56,11 @@ public class UserController {
 
         try{
             return userService.getUserById(id);
-        }
-        catch (UserNotFoundException ex){
+
+        } catch (UserNotFoundException ex){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,ex.getMessage());
         }
     }
-
 
 
 
@@ -55,8 +68,7 @@ public class UserController {
     public User updateUserId(@PathVariable Long id, @RequestBody User user){
         try{
             return userService.updateUserById(id,user);
-        }
-        catch (UserNotFoundException ex){
+        } catch (UserNotFoundException ex){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ex.getMessage());
         }
     }
@@ -65,7 +77,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public String deleteUserById(@PathVariable Long id){
-        return userService.deleteUserById(id);
+            return userService.deleteUserById(id);
     }
 
 
